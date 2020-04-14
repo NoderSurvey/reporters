@@ -1,0 +1,2197 @@
+<html>
+  <head>
+    <title>Node.js 开发者报告</title>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
+    <script src="https://gallerybox.echartsjs.com/dep/echarts/map/js/china.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+      function setChart(id, idx = 1, title, list) {
+          const chart = echarts.init(document.getElementById(id));
+          const cols = Object.keys(list[0]).length - 1;
+          const getPie = (dimension) => ({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+          chart.on('updateAxisPointer', function(event) {
+            var xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo && xAxisInfo.axisIndex === 0) {
+              var dimension = xAxisInfo.value + 1;
+              chart.setOption(getPie(dimension));
+            }
+          });
+          chart.setOption({
+            legend: {},
+            tooltip: {
+              trigger: 'axis',
+              showContent: true,
+              formatter: (list) => {
+                  const [item] = list;
+                  if (list.length === 1 && item && item.value) {
+                    return (item.value / 1113 * 100).toFixed(2) + '%';
+                  }
+                  return list[0]['name'];
+              }
+            },
+            dataset: {
+              source: [
+                ['product', ...Object.keys(list[0]).slice(0, cols)], ...(list.map(({
+                  key
+                }) => key).map((key) => [key, ...((Object.entries(list.find((item) => item.key === key))).map(([_, n]) => n).slice(0, cols))]))
+              ]
+            },
+            xAxis: [{
+              type: 'category'
+            }, {
+              type: 'value',
+              gridIndex: 1
+            }],
+            yAxis: [{
+              gridIndex: 0
+            }, {
+              gridIndex: 1,
+              type: 'category',
+              data: list.map(({
+                key
+              }) => key),
+              inverse: 1,
+            }],
+            grid: [{
+              top: '320px',
+              height: '250px',
+              width: '40%',
+            }, {
+              top: '40px',
+              height: '220px',
+            }],
+            title: [title],
+            series: [...Array(list.length).fill({
+              type: 'line',
+              smooth: true,
+              seriesLayoutBy: 'row'
+            }), {
+              stack: '全量',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              type: 'bar',
+              data: list.map((item) => Object.entries(item).reduce((sum, [_, n]) => sum + (Number(n) || 0), 0))
+            }, {
+              type: 'pie',
+              id: 'pie',
+              radius: '20%',
+              center: ['75%', '460px'],
+              label: {
+                formatter: '{b}: {@2012} ({d}%)'
+              },
+              encode: {
+                itemName: 'product',
+                value: '2012',
+                tooltip: '2012'
+              }
+            }]
+          });
+          setTimeout(function() {
+            chart.setOption(getPie(idx));
+          });
+        }
+    </script>
+  </head>
+  <body>
+    <h1>2020 年度报告</h1>
+    <div class="lake-content-editor-core lake-engine lake-typography-traditional" data-lake-element="root" data-selection-146296="%7B%22path%22%3A%5B%5B69%2C0%2C1%2C0%5D%2C%5B69%2C0%2C1%2C1%5D%5D%2C%22uuid%22%3A%22146296%22%2C%22active%22%3Atrue%7D">
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span style="background-color: transparent;">这是由 Ecma 成员发起，阿里巴巴、腾讯等公司领衔的国内第一次年度 Node.js 用户调查。该调查于 2020 年 2 月至 2020 年 3 月以和中文进行，截止 3 月 27 日共有 1,</span>074<span style="background-color: transparent;"> 名受访者参加。</span></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span style="background-color: transparent;"><br></span><span>BFF、SSR、Serverless…… 随着技术的浪潮不断翻涌， Node.js 正在为我们逐渐带来更多的生产力。</span>为了更清除的了解 Node.js 生态现状，帮助国人更好地：</p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>了解大家都是如何使用 Node.js</li>
+        <li>梳理 Node.js 技术栈</li>
+        <li>发现前端/Noder 都在关注些什么</li>
+        <li>帮助开发者找准这个 Node.js 的定位</li>
+        <li>找到目前 Node.js 生态所缺乏的以及被期望的内容</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="NijOY" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">受访者</h3>
+      <h4 id="W3lUp" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">人物来源</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">本次调查问卷中，填写问卷的&nbsp;<span>Node.js 开发者主要</span>年龄分布如下：</p>
+
+      <div id="main-years" style="width: 600px;height:400px; margin-top: 20px;"></div>
+      <script type="text/javascript">
+          echarts.init(document.getElementById('main-years')).setOption({
+              tooltip: {
+                  trigger: 'item',
+                  formatter: '{a} <br/>{b} : {c}'
+              },
+              legend: {
+                  orient: 'vertical',
+                  right: 0,
+              },
+              series: [
+                  {
+                      name: '姓名',
+                      type: 'pie',
+                      radius: '55%',
+                      center: ['40%', '50%'],
+                      data: [
+                          {name: '<22 岁 (10.2%)', value: 111},
+                          {name: '22~24 岁 (26.1%)', value: 284},
+                          {name: '25~27 岁 (29.14%)', value: 317, selected: true},
+                          {name: '28~32 岁 (24.27%)', value: 269},
+                          {name: '>32 岁 (9.84%)', value: 107}
+
+                      ],
+                  }
+              ]
+          });
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <div data-card-type="block" data-lake-card="table" id="oBacr">
+      </div>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">他们的主要分布情况为：</p>
+      <div id="canvas-location" style="width: 600px;height:400px; margin-top: 20px;"></div>
+      <script type="text/javascript">
+          // 基于准备好的dom，初始化echarts实例
+          echarts.init(document.getElementById('canvas-location')).setOption({
+            tooltip: {
+                trigger: 'item'
+            },
+            visualMap: {
+                min: 0,
+                max: 200,
+                left: 'left',
+                top: 'bottom',
+                text: ['多','少'],
+                calculable: true,
+                inRange: {
+                    color: ['#7dd47f', '#08460a']
+                },
+            },
+            toolbox: {
+                show: true,
+                orient: 'vertical',
+                left: 'right',
+                top: 'center',
+                feature: {
+                    dataView: {readOnly: false},
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            
+            series: [
+                {
+                    name: 'Noder',
+                    type: 'map',
+                    mapType: 'china',
+                    roam: false,
+                    label: {
+                        normal: { show: true },
+                        emphasis: { show: true }
+                    },
+                    data:[
+                        {name:'上海', value: 152} ,
+                        {name:'云南', value: 2} ,
+                        {name:'北京', value: 214} ,
+                        {name:'吉林', value: 1} ,
+                        {name:'四川', value: 45} ,
+                        {name:'天津', value: 3} ,
+                        {name:'安徽', value: 2} ,
+                        {name:'山东', value: 7} ,
+                        {name:'山西', value: 1} ,
+                        {name:'广东', value: 282} ,
+                        {name:'广西', value: 1} ,
+                        {name:'江苏', value: 30} ,
+                        {name:'江西', value: 2} ,
+                        {name:'河北', value: 1} ,
+                        {name:'河南', value: 6} ,
+                        {name:'浙江', value: 177} ,
+                        {name:'湖北', value: 21} ,
+                        {name:'湖南', value: 8} ,
+                        {name:'福建', value: 13} ,
+                        {name:'贵州', value: 1} ,
+                        {name:'辽宁', value: 6} ,
+                        {name:'重庆', value: 4} ,
+                        {name:'陕西', value: 8} ,
+                        {name:'香港', value: 2} 
+                    ],
+                    
+                }
+              ]
+          });
+          </script>
+
+          <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+          <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">其中以城市角度看，人数分布主要是：</p>
+
+      <div id="canvas-cities" style="width: 600px;height:400px; margin-top: 20px;"></div>
+      <script type="text/javascript">
+          echarts.init(document.getElementById('canvas-cities')).setOption({
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['城市', '其他城市', '移动办公', '海外']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value'
+            },
+            yAxis: {
+                type: 'category',
+                data: ['其他城市', '海外', '移动办公', '南京', '武汉', '成都', '广州', '上海', '杭州', '深圳', '北京']
+            },
+            series: [{
+                name: '城市',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    show: true,
+                    position: 'insideRight'
+                },
+                color: '#76ab79',
+                data: [undefined, undefined, undefined, 17, 21, 44, 84, 152, 173, 188, 214]
+            }, {
+                name: '其他城市',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    show: true,
+                    position: 'insideRight'
+                },
+                color: 'gray',
+                data: [157]
+            }, {
+                name: '移动办公',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    show: true,
+                    position: 'insideRight'
+                },
+                data: [undefined, undefined, 14]
+            }, {
+                name: '海外',
+                type: 'bar',
+                stack: '总量',
+                label: {
+                    show: true,
+                    position: 'insideRight'
+                },
+                data: [undefined, 10]
+            }]
+        });
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="hTTbz" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">职业简历</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>典型的受访者来自两种公司，分别是是百人左右的小型公司，以及 5k 人以上的大公司。</li>
+        <li>他们通常是 7 人左右的团队内的前端或者全栈工程师。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image"><img data-role="image" src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1585852963239-decb0550-c268-4f79-9e47-6e0b43cb5e36.png?x-oss-process=image/resize,w_1500" data-raw-src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1585852963239-decb0550-c268-4f79-9e47-6e0b43cb5e36.png" class="image lake-drag-image" alt="image.png" title="image.png" style="visibility: visible; border: none; box-shadow: none; width: 746px; height: 411px;"></span></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="GCwUt" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">工作内容</h3>
+      <h4 id="NjezI" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">应用场景</h4>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>Node.js 的典型应用场景是网站开发。</li>
+        <li>大公司内会有更多的人使用 Node.js 进行工具 & 自动化开发。</li>
+        <li>中小公司会更乐意在移动应用中尝试 Node.js。</li>
+        <li>不少人 (35.01%) 学习 Node.js 是出于业余爱好，在小公司更加明显。</li>
+      </ul>
+      <div id="canvas-company" style="width: 800px;height:800px; margin-top: 20px;"></div>
+      <script type="text/javascript">
+        const companyChart = echarts.init(document.getElementById('canvas-company'));
+        companyChart.on('updateAxisPointer', function(event) {
+            var xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+                var dimension = xAxisInfo.value + 1;
+                companyChart.setOption({
+                    series: {
+                        id: 'pie',
+                        label: {
+                            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                        },
+                        center: ['60%', '25%'],
+                        encode: {
+                            value: dimension,
+                            tooltip: dimension
+                        }
+                    }
+                });
+            }
+        });
+
+
+        companyChart.setOption({
+            legend: {
+                  orient: 'vertical',
+                  left: 50,
+                  top: 50,
+              },
+            tooltip: {
+                trigger: 'axis',
+                showContent: false
+            },
+            dataset: {
+                source: [
+                    ['product', '1人', '2-10人', '11-50人', '51-500人', '501-1000人', '1001-5000人', '>5000人'],
+                    ['网站开发', 31, 49, 160, 240, 82, 95, 308],
+                    ['企业商务', 1, 16, 38, 64, 15, 19, 48],
+                    ['业余爱好', 24, 21, 67, 83, 34, 39, 124],
+                    ['工具 & 自动化', 12, 16, 68, 116, 41, 62, 230],
+                    ['其他', 4, 2, 7, 7, 4, 4, 5],
+                    ['网络爬虫', 15, 13, 47, 66, 24, 31, 91],
+                    ['移动应用', 5, 21, 50, 46, 21, 16, 66],
+                    ['数据分析', 1, 4, 14, 25, 8, 14, 42],
+                    ['桌面应用', 6, 11, 28, 43, 10, 13, 54],
+                    ['游戏', 1, 1, 7, 7, 2, 7, 6],
+                    ['嵌入式系统', 1, 5, 3, 7, undefined, 2, 6],
+                ]
+            },
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                gridIndex: 0
+            },
+            grid: {
+                top: '55%'
+            },
+            series: [{
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'pie',
+                id: 'pie',
+                radius: '30%',
+                center: ['50%', '25%'],
+                label: {
+                    formatter: '{b}: {@2012} ({d}%)'
+                },
+                encode: {
+                    itemName: 'product',
+                    value: '2012',
+                    tooltip: '2012'
+                }
+            }]
+        });
+        setTimeout(function() {
+            companyChart.setOption({
+                series: {
+                    id: 'pie',
+                    label: {
+                        formatter: '{b}: {@[' + 7 + ']} ({d}%)'
+                    },
+                    center: ['60%', '25%'],
+                    encode: {
+                        value: 7,
+                        tooltip: 7
+                    }
+                }
+            });
+        }, 10);
+      </script>
+
+      <h4 id="2MAVo" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;"><span style="background-color: transparent;">开发场景</span></h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>整体而言有 87.50% 使用 Node.js 开发服务端 API，有 51.19% 的人开发 CLI & 工具。</li>
+        <li>随着使用年限增加将 Node.js 作为服务端 API 的比率略有下降 (5%) 而 BFF 的使用场景略有上涨 (4%)。</li>
+        <li>越年轻的使用者越愿意在 SSR 场景中使用 Node.js。</li>
+      </ul>
+
+      <div id="canvas-sence" style="width: 800px;height:800px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const senceChart = echarts.init(document.getElementById('canvas-sence'));
+        senceChart.on('updateAxisPointer', function(event) {
+          var xAxisInfo = event.axesInfo[0];
+          if (xAxisInfo) {
+            var dimension = xAxisInfo.value + 1;
+            senceChart.setOption({
+              series: {
+                id: 'pie',
+                label: {
+                  formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                },
+                center: ['60%', '25%'],
+                encode: {
+                  value: dimension,
+                  tooltip: dimension
+                }
+              }
+            });
+          }
+        });
+
+        senceChart.setOption({
+          legend: {
+              orient: 'vertical',
+              left: 50,
+              top: 50,
+          },
+          tooltip: {
+            trigger: 'axis',
+            showContent: false
+          },
+          dataset: {
+            source: [
+              ['product', '不满 1 年', '1~3 年', '3~5 年', '5~10年'],
+              ['服务端 API', 51, 487, 244, 90],
+              ['SSR 应用', 49, 181, 99, 35],
+              ['Proxy 层', 31, 155, 103, 39],
+              ['CLI & 工具', 56, 276, 175, 61],
+              ['BFF 层', 23, 151, 92, 40],
+              ['代码片段', 13, 24, 15, 11],
+              ['其他', 9, 17, 13, 5],
+            ]
+          },
+          xAxis: {
+            type: 'category'
+          },
+          yAxis: {
+            gridIndex: 0
+          },
+          grid: {
+            top: '55%'
+          },
+          series: [{
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }]
+        });
+
+        setTimeout(function() {
+          senceChart.setOption({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + 1 + ']} ({d}%)'
+              },
+              center: ['60%', '25%'],
+              encode: {
+                value: 1,
+                tooltip: 1
+              }
+            }
+          });
+
+        });
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="UCAGs" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">多语言</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>与 Node.js 开发最契合的是前端开发语言（JavaScript/HTML/CSS）。</li>
+        <li>除了前端，整体上与 Node.js 最常见并存的语言分别是 Java(25.27%)、Python(22.24%) 和 Go(17.73%)。</li>
+      </ul>
+
+
+      <div id="canvas-lang" style="width: 800px;height:800px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const langChart = echarts.init(document.getElementById('canvas-lang'));
+        const lang = ['其他语言', 'Swift', 'Scala', 'Rust', 'Ruby', 'Python', 'PHP', 'Kotlin', 'JavaScript/HTML/CSS', 'Java', 'Go', 'Dart', 'C#', 'C/C++'];
+        const pos = ['其他职位', '在校生/实习生', '测试', '运维', '架构师', '技术总监', '项目经理', '团队领导/组长', '全栈工程师', '后端工程师', '前端工程师'];
+
+        langChart.setOption({
+          tooltip: {
+            position: 'top',
+            formatter: function(params) {
+              return '同时使用 ' + lang[params.value[0]] + ' 的' +
+                pos[params.value[1]] + '占总人数的  ' +
+                ((params.value[2] / 1113) * 100).toFixed(2)
+                + '%';
+            }
+          },
+          grid: {
+            left: 2,
+            bottom: 10,
+            right: 10,
+            containLabel: true
+          },
+          xAxis: {
+            type: 'category',
+            data: lang,
+            boundaryGap: false,
+            splitLine: {
+              show: true,
+              lineStyle: {
+                // color: '#999',
+                type: 'dashed'
+              },
+              interval: 0,
+            },
+          },
+          yAxis: {
+            type: 'category',
+            data: pos,
+            boundaryGap: false,
+            axisLine: {
+              show: false
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                // color: '#999',
+                type: 'dashed'
+              },
+              interval: 0,
+            },
+          },
+          series: [{
+            name: 'Punch Card',
+            type: 'scatter',
+            symbolSize: function(val) {
+              const d = val[2];
+              if (d > 400) return d * 0.12;
+              if (d > 200) return d * 0.18;
+              if (d > 50) return d * 0.22;
+              if (d > 10) return d * 0.3;
+              return d * 1;
+            },
+            data: [[4, 0, 3], [7, 0, 3], [8, 0, 7], [9, 0, 6], [10, 0, 13], [0, 1, 2], [1, 1, 1], [3, 1, 2], [4, 1, 3], [5, 1, 2], [7, 1, 6], [8, 1, 10], [9, 1, 1], [10, 1, 12], [1, 2, 1], [4, 2, 2], [5, 2, 2], [7, 2, 1], [8, 2, 1], [9, 2, 2], [10, 2, 1], [1, 3, 6], [3, 3, 4], [4, 3, 8], [5, 3, 4], [6, 3, 2], [7, 3, 4], [8, 3, 30], [9, 3, 15], [10, 3, 25], [1, 4, 2], [4, 4, 2], [5, 4, 1], [6, 4, 3], [7, 4, 6], [8, 4, 15], [9, 4, 4], [10, 4, 11], [0, 5, 5], [1, 5, 22], [2, 5, 4], [3, 5, 12], [4, 5, 23], [5, 5, 16], [6, 5, 11], [7, 5, 55], [8, 5, 95], [9, 5, 57], [10, 5, 133], [1, 6, 8], [3, 6, 3], [4, 6, 7], [5, 6, 9], [6, 6, 7], [7, 6, 36], [8, 6, 61], [9, 6, 44], [10, 6, 77], [1, 7, 6], [4, 7, 3], [5, 7, 3], [6, 7, 1], [7, 7, 4], [8, 7, 9], [9, 7, 6], [10, 7, 18], [0, 8, 11], [1, 8, 56], [2, 8, 5], [3, 8, 23], [4, 8, 58], [5, 8, 31], [6, 8, 24], [7, 8, 136], [8, 8, 325], [9, 8, 190], [10, 8, 674], [0, 9, 10], [1, 9, 21], [2, 9, 2], [3, 9, 3], [4, 9, 30], [5, 9, 17], [6, 9, 6], [7, 9, 47], [8, 9, 113], [9, 9, 87], [10, 9, 142], [0, 10, 4], [1, 10, 15], [3, 10, 9], [4, 10, 20], [5, 10, 15], [6, 10, 8], [7, 10, 32], [8, 10, 83], [9, 10, 76], [10, 10, 100], [0, 11, 2], [1, 11, 3], [3, 11, 4], [4, 11, 6], [5, 11, 4], [7, 11, 12], [8, 11, 29], [9, 11, 6], [10, 11, 31], [1, 12, 4], [3, 12, 4], [4, 12, 13], [5, 12, 7], [6, 12, 9], [7, 12, 21], [8, 12, 44], [9, 12, 25], [10, 12, 44], [0, 13, 4], [1, 13, 22], [2, 13, 1], [3, 13, 5], [4, 13, 17], [5, 13, 10], [6, 13, 5], [7, 13, 23], [8, 13, 55], [9, 13, 33], [10, 13, 51] ] .map(function(item) { return [item[1], item[0], item[2]]; })
+          }]
+        })
+      </script>
+
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="Y1juL" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">开发流程</h3>
+      <h4 id="49507c09" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">代码转译</h4>
+
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>随着 Node.js 使用年限增加，不转译的比率大幅下降 (45% 到 25%)。</li>
+        <li>TypeScript 是最常用的转译语言。</li>
+      </ul>
+
+      <div id="canvas-trans" style="width: 800px;height:600px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const transChart = echarts.init(document.getElementById('canvas-trans'));
+        transChart.on('updateAxisPointer', function(event) {
+          var xAxisInfo = event.axesInfo[0];
+          if (xAxisInfo) {
+              var dimension = xAxisInfo.value + 1;
+              transChart.setOption({
+                  series: {
+                      id: 'pie',
+                      label: {
+                          formatter: '{b} ({d}%)'
+                      },
+                      center: ['60%', '25%'],
+                      encode: {
+                          value: dimension,
+                          tooltip: dimension
+                      }
+                  }
+              });
+          }
+      });
+
+      transChart.setOption({
+          legend: {
+              orient: 'vertical',
+              left: 50,
+              top: 50,
+          },
+          tooltip: {
+              trigger: 'axis',
+              showContent: false
+          },
+          dataset: {
+              source: [
+                  ['product', '0~1 年', '1~3 年', '3~5 年', '5~10年'],
+                  ['TypeScript', 98, 351, 191, 68],
+                  ['不转译', 94, 219, 94, 28],
+                  ['CoffeeScript', 2, 5, 13, 9],
+                  ['Dart', 1, 9, 4, 4],
+                  ['PureScript', undefined, 2, 2, 2],
+                  ['ClojureScript', 2, 4, 1, undefined],
+                  ['Scale.js', 2, 2, undefined, undefined],
+                  ['Reason', 1, 2, 2, undefined],
+                  ['Elm', 1, undefined, undefined, undefined],
+                  ['其他', 4, 5, 8, undefined]
+              ]
+          },
+          xAxis: {
+              type: 'category'
+          },
+          yAxis: {
+              gridIndex: 0
+          },
+          grid: {
+              top: '55%'
+          },
+          series: [{
+              type: 'bar',
+              stack: '总量',
+              smooth: true,
+              seriesLayoutBy: 'row'
+          }, {
+              type: 'bar',
+              stack: '总量',
+              smooth: true,
+              seriesLayoutBy: 'row'
+          }, {
+              type: 'bar',
+              stack: '总量',
+              smooth: true,
+              seriesLayoutBy: 'row'
+          }, {
+              type: 'bar',
+              stack: '总量',
+              smooth: true,
+              seriesLayoutBy: 'row'
+          }, {
+              type: 'pie',
+              id: 'pie',
+              radius: '30%',
+              center: ['50%', '25%'],
+              label: {
+                  formatter: '{b}: {@2012} ({d}%)'
+              },
+              encode: {
+                  itemName: 'product',
+                  value: '2012',
+                  tooltip: '2012'
+              }
+          }]
+      });
+      setTimeout(function() {
+          transChart.setOption({
+              series: {
+                  id: 'pie',
+                  label: {
+                      formatter: '{b} ({d}%)'
+                  },
+                  center: ['60%', '25%'],
+                  encode: {
+                      value: 4,
+                      tooltip: 4
+                  }
+              }
+          });
+      }, 10);
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="1cf481e0" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">代码检查</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>整体上有 90% 的 Node.js 开发者使用过 ESLint。</li>
+        <li>随着团队规模的增大 TSLint 的使用存在微小的增幅。</li>
+      </ul>
+
+      <div id="canvas-linter" style="width: 800px;height:500px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const linterChart = echarts.init(document.getElementById('canvas-linter'));
+        linterChart.on('updateAxisPointer', function(event) {
+        var xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo) {
+                var dimension = xAxisInfo.value + 1;
+                linterChart.setOption({
+                    series: {
+                        id: 'pie',
+                        label: {
+                            formatter: '{b} ({d}%)'
+                        },
+                        center: ['60%', '25%'],
+                        encode: {
+                            value: dimension,
+                            tooltip: dimension
+                        }
+                    }
+                });
+            }
+        });
+
+        linterChart.setOption({
+            legend: {
+                orient: 'vertical',
+                left: 50,
+                top: 50,
+            },
+            tooltip: {
+                trigger: 'axis',
+                showContent: false
+            },
+            dataset: {
+                source: [
+                    ['product', '1人', '2-7人', '8-12人', '13-20人', '21-40人', '40-100人', '>100人'],
+                    [ 'ESLint', 45, 307, 273, 179, 122, 56, 23],
+                    [ 'TSLint', 15, 118, 112, 71, 50, 27, 11],
+                    [ 'JSDoc', 3, 26, 30, 19, 12, 7, 4],
+                    [ 'Standard', 3, 31, 31, 15, 19, 8, 3],
+                    [ 'JSCS', undefined, 1, 2, 3, 1, undefined, undefined],
+                    [ 'JSHint', 4, 25, 20, 16, 10, 5, 1],
+                    [ 'Flow', undefined, 4, 5, 2, 2, 4, undefined],
+                    [ '其他', 8, 19, 12, 6, 3, 1, undefined],
+                ]
+            },
+            xAxis: {
+                type: 'category'
+            },
+            yAxis: {
+                gridIndex: 0
+            },
+            grid: {
+                top: '55%'
+            },
+            series: [{
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'bar',
+                stack: '总量',
+                smooth: true,
+                seriesLayoutBy: 'row'
+            }, {
+                type: 'pie',
+                id: 'pie',
+                radius: '30%',
+                center: ['50%', '25%'],
+                label: {
+                    formatter: '{b}: {@2012} ({d}%)'
+                },
+                encode: {
+                    itemName: 'product',
+                    value: '2012',
+                    tooltip: '2012'
+                }
+            }]
+        });
+        setTimeout(function() {
+            linterChart.setOption({
+                series: {
+                    id: 'pie',
+                    label: {
+                        formatter: '{b} ({d}%)'
+                    },
+                    center: ['60%', '25%'],
+                    encode: {
+                        value: 4,
+                        tooltip: 4
+                    }
+                }
+            });
+        }, 10);
+      </script>
+
+      <h4 id="XDWpg" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">配置方式</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>文件配置是最流行的配置方式。</li>
+        <li>虽然配置中心使用概率不高，不过公司规模越大则配置中心的使用概率越高。</li>
+      </ul>
+
+      <div id="canvas-cfg" style="width: 700px;height:300px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        echarts.init(document.getElementById('canvas-cfg')).setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: ([item]) => {
+              return (item.value / 1113 * 100).toFixed(2) + '%';
+            }
+          },
+          grid: [{
+            top: 30,
+            bottom: 30,
+            left: 10,
+            containLabel: true
+          }],
+          xAxis: {
+            type: 'value',
+            boundaryGap: [0, 0.01]
+          },
+          yAxis: {
+            type: 'category',
+            data: ['文件配置',
+              '环境变量配置',
+              '数据库配置',
+              '配置中心'
+            ],
+            inverse: true
+          },
+          series: [{
+            name: '数据',
+            type: 'bar',
+            color: '#348335',
+            data: [876, 670, 288, 186]
+          }]
+        });
+      </script>
+
+      
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="IrvIV" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">编辑器</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>VS Code 一骑绝尘，是 Node.js 开发者最喜爱开发工具</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-ide" style="width: 700px;height:400px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const ideData = {
+          'VS Code': 1020,
+          WebStorm: 267,
+          Sublime: 176,
+          'intellij IDEA': 141,
+          Vim: 124,
+          Atom: 35,
+          Eclipse: 20,
+          '其他': 14,
+          Emacs: 12,
+        };
+        echarts.init(document.getElementById('canvas-ide')).setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: ([item]) => {
+              return (item.value / 1113 * 100).toFixed(2) + '%';
+            }
+          },
+          grid: [{
+            top: 30,
+            bottom: 50,
+            left: 10,
+            containLabel: true
+          }],
+          xAxis: {
+            type: 'value',
+          },
+          grid: [{
+            top: 0,
+            bottom: 0,
+            left: 10,
+            containLabel: true
+          }],
+          yAxis: {
+            type: 'category',
+            data: Object.keys(ideData),
+            inverse: true
+          },
+          series: [{
+            name: '数据',
+            type: 'bar',
+            color: '#348335',
+            data: Object.keys(ideData).map((key) => ideData[key])
+          }]
+        });
+      
+      </script>
+
+      
+      <h4 id="wMvQl" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;"><br></h4>
+      <h4 id="GME9K" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">进程管理</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>公司越大使用 Docker 的比例越高。</li>
+        <li>中型公司使用 PM2 的比例更高。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-process" style="width: 1100px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-process', 2, {
+              text: '不同规模公司使用的进程管理方式',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [
+            {
+              '1人': 20,
+              '2-10人': 40,
+              '11-50人': 126,
+              '51-500人': 198,
+              '501-1000人': 73,
+              '1001-5000人': 73,
+              '>5000人': 232,
+              key: 'PM2'
+          }, {
+              '1人': 14,
+              '2-10人': 20,
+              '11-50人': 77,
+              '51-500人': 141,
+              '501-1000人': 48,
+              '1001-5000人': 61,
+              '>5000人': 210,
+              key: 'Docker'
+          }, {
+              '1人': 3,
+              '2-10人': 3,
+              '11-50人': 13,
+              '51-500人': 11,
+              '501-1000人': 5,
+              '1001-5000人': 5,
+              '>5000人': 17,
+              key: '其他'
+          }, {
+              '1人': 2,
+              '2-10人': 1,
+              '11-50人': 10,
+              '51-500人': 12,
+              '501-1000人': 4,
+              '1001-5000人': 3,
+              '>5000人': 20,
+              key: 'forever'
+          }, {
+              '1人': 2,
+              '2-10人': 2,
+              '11-50人': 5,
+              '51-500人': 5,
+              '501-1000人': 4,
+              '1001-5000人': 2,
+              '>5000人': 10,
+              key: 'supervisor (Node)'
+          }, {
+              '1人': 1,
+              '2-10人': undefined,
+              '11-50人': 2,
+              '51-500人': undefined,
+              '501-1000人': 1,
+              '1001-5000人': undefined,
+              '>5000人': 4,
+              key: 'egg-bin'
+          }, {
+              '1人': 1,
+              '2-10人': undefined,
+              '11-50人': 2,
+              '51-500人': 3,
+              '501-1000人': undefined,
+              '1001-5000人': undefined,
+              '>5000人': 1,
+              key: 'Supervisord (Unix)'
+          }]
+        );
+      </script>
+      
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="2b4oU" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">操作系统</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-os" style="width: 700px; height:150px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const osData = { Linux: 958, MacOS: 236, Windows: 204 };
+        echarts.init(document.getElementById('canvas-os')).setOption({
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: ([item]) => {
+              return (item.value / 1113 * 100).toFixed(2) + '%';
+            }
+          },
+          grid: [{
+            top: 50,
+            bottom: 100,
+            left: 10,
+            containLabel: true
+          }],
+          xAxis: {
+            type: 'value',
+          },
+          grid: [{
+            top: 0,
+            bottom: 0,
+            left: 10,
+            containLabel: true
+          }],
+          yAxis: {
+            type: 'category',
+            data: Object.keys(osData),
+            inverse: true
+          },
+          series: [{
+            name: '数据',
+            type: 'bar',
+            color: '#348335',
+            data: Object.keys(osData).map((key) => osData[key])
+          }]
+        });
+      
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="yvSOx" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;"><span style="background-color: transparent;">技术栈</span></h3>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span style="background-color: transparent;"><br></span></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">一个典型的 Node.js Web 应用：</p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>使用 Express/Koa 框架</li>
+        <li>使用 Mysql/MongoDB + Redis 数据</li>
+        <li>同时配置了 Nginx 作为反向代理</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="t2IHZ" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;"><span style="background-color: transparent;">Web 框架</span></h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>虽然感受上 Koa.js 的教程更多，但是实际上 Expree.js 依旧是最常见的框架。</li>
+        <li>除了 Koa/Express 之外较流行的 Web 框架分别有 Egg.js (38%)、Nest.js (15%)、Next.js (7%) 和 Midway.js (6%)。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <div id="canvas-web" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-web', 2, {
+              text: '不同开发经验的 Noder 使用的 Web 框架',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [{
+              '0~1 年': 118,
+              '1~3 年': 333,
+              '3~5 年': 168,
+              '5~10年': 64,
+              key: 'Express.js'
+            },
+            {
+              '0~1 年': 111,
+              '1~3 年': 327,
+              '3~5 年': 155,
+              '5~10年': 57,
+              key: 'Koa.js'
+            },
+            {
+              '0~1 年': 49,
+              '1~3 年': 222,
+              '3~5 年': 110,
+              '5~10年': 39,
+              key: 'Egg.js'
+            },
+            {
+              '0~1 年': 29,
+              '1~3 年': 87,
+              '3~5 年': 44,
+              '5~10年': 13,
+              key: 'Nest.js'
+            },
+            { '0~1 年': 15, '1~3 年': 40, '3~5 年': 24, '5~10年': 7, key: 'Next.js' },
+            {
+              '0~1 年': 6,
+              '1~3 年': 30,
+              '3~5 年': 19,
+              '5~10年': 11,
+              key: 'Midway.js'
+            },
+            { '0~1 年': 9, '1~3 年': 22, '3~5 年': 13, '5~10年': 9, key: '其他' },
+            { '0~1 年': 1, '1~3 年': 4, '3~5 年': 8, '5~10年': 3, key: 'Fastify.js' },
+            {
+              '0~1 年': undefined,
+              '1~3 年': 7,
+              '3~5 年': 5,
+              '5~10年': undefined,
+              key: 'Hapi.js'
+            },
+            {
+              '0~1 年': undefined,
+              '1~3 年': 7,
+              '3~5 年': 2,
+              '5~10年': 2,
+              key: 'Restify.js'
+            },
+            {
+              '0~1 年': undefined,
+              '1~3 年': 4,
+              '3~5 年': 5,
+              '5~10年': 1,
+              key: 'Loopback.io'
+            },
+          ]);
+      </script>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="KHk5w" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">数据库</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>在 2020 年，如果要学三个数据库，那么请学习 MySQL (79%)、MongoDB (60%) 和 Redis (49%)。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-db" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-db', 2, {
+              text: '不同开发经验的 Noder 使用的数据库',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [{
+                '0~1 年': 148,
+                '1~3 年': 430,
+                '3~5 年': 216,
+                '5~10年': 81,
+                key: 'MySQL'
+              },
+              {
+                '0~1 年': 110,
+                '1~3 年': 318,
+                '3~5 年': 175,
+                '5~10年': 63,
+                key: 'MongoDB'
+              },
+              {
+                '0~1 年': 63,
+                '1~3 年': 258,
+                '3~5 年': 160,
+                '5~10年': 65,
+                key: 'Redis'
+              },
+              {
+                '0~1 年': 14,
+                '1~3 年': 78,
+                '3~5 年': 42,
+                '5~10年': 10,
+                key: 'PostgreSQL'
+              },
+              { '0~1 年': 3, '1~3 年': 28, '3~5 年': 11, '5~10年': 4, key: 'SQLite' },
+              {
+                '0~1 年': 7,
+                '1~3 年': 21,
+                '3~5 年': 11,
+                '5~10年': 1,
+                key: 'SQL Server'
+              },
+              { '0~1 年': 3, '1~3 年': 9, '3~5 年': 9, '5~10年': 4, key: '其他' },
+              {
+                '0~1 年': 2,
+                '1~3 年': 7,
+                '3~5 年': 6,
+                '5~10年': undefined,
+                key: 'Oracle'
+              },
+              { '0~1 年': 1, '1~3 年': 5, '3~5 年': 3, '5~10年': 2, key: '自研' },
+              { '0~1 年': 1, '1~3 年': 4, '3~5 年': 3, '5~10年': 1, key: 'Influxdb' },
+              {
+                '0~1 年': 1,
+                '1~3 年': 1,
+                '3~5 年': 1,
+                '5~10年': undefined,
+                key: 'DB2'
+              },
+              {
+                '0~1 年': undefined,
+                '1~3 年': 1,
+                '3~5 年': undefined,
+                '5~10年': undefined,
+                key: 'HBASE'
+              }
+            ]
+        );
+      </script>
+      
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <h4 id="7dCzn" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">反向代理</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>Noder 们对于反向代理的概念是约等于 Nginx 的。</li>
+        <li>使用反向代理的基本都会使用 Nginx。</li>
+        <li>越大的公司越倾向于使用反向代理。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-nginx" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-nginx', 2, {
+              text: '不同规模公司的反向代理',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [
+            {
+              '1人': 30,
+              '2-10人': 52,
+              '11-50人': 156,
+              '51-500人': 251,
+              '501-1000人': 91,
+              '1001-5000人': 99,
+              '>5000人': 320,
+              key: 'Nginx'
+            },
+            {
+              '1人': 9,
+              '2-10人': 6,
+              '11-50人': 34,
+              '51-500人': 39,
+              '501-1000人': 14,
+              '1001-5000人': 17,
+              '>5000人': 46,
+              key: '不使用反向代理'
+            },
+            {
+              '1人': 2,
+              '2-10人': 4,
+              '11-50人': 13,
+              '51-500人': 9,
+              '501-1000人': 4,
+              '1001-5000人': 3,
+              '>5000人': 12,
+              key: 'Apache'
+            },
+            {
+              '1人': 1,
+              '2-10人': 2,
+              '11-50人': 7,
+              '51-500人': 3,
+              '501-1000人': 3,
+              '1001-5000人': 3,
+              '>5000人': 10,
+              key: '其他'
+            },
+            {
+              '1人': 1,
+              '2-10人': undefined,
+              '11-50人': 3,
+              '51-500人': 6,
+              '501-1000人': 1,
+              '1001-5000人': 4,
+              '>5000人': undefined,
+              key: 'Tomcat'
+            },
+          ]
+        );
+      </script>
+      
+     
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="vZRbF" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">RPC</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>HTTP 是最常见的 RPC 方式，此外使用最多的是消息队列。</li>
+        <li>中型公司使用消息队列的比率最高。</li>
+        <li>大公司使用自研 RPC 协议的比率最高。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-rpc" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-rpc', 2, {
+              text: '不同规模公司的 RPC 方式',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [{
+              '1人': 22,
+              '2-10人': 41,
+              '11-50人': 145,
+              '51-500人': 230,
+              '501-1000人': 80,
+              '1001-5000人': 89,
+              '>5000人': 265,
+              key: 'HTTP'
+            },
+            {
+              '1人': 6,
+              '2-10人': 10,
+              '11-50人': 45,
+              '51-500人': 77,
+              '501-1000人': 27,
+              '1001-5000人': 34,
+              '>5000人': 49,
+              key: '消息队列'
+            },
+            {
+              '1人': 4,
+              '2-10人': 9,
+              '11-50人': 39,
+              '51-500人': 43,
+              '501-1000人': 18,
+              '1001-5000人': 26,
+              '>5000人': 52,
+              key: 'gRPC'
+            },
+            {
+              '1人': 1,
+              '2-10人': 2,
+              '11-50人': 5,
+              '51-500人': 12,
+              '501-1000人': 5,
+              '1001-5000人': 8,
+              '>5000人': 86,
+              key: '自研 RPC 协议'
+            },
+            {
+              '1人': 3,
+              '2-10人': undefined,
+              '11-50人': 6,
+              '51-500人': 14,
+              '501-1000人': 4,
+              '1001-5000人': 13,
+              '>5000人': 18,
+              key: 'dubbo'
+            },
+            {
+              '1人': 6,
+              '2-10人': 4,
+              '11-50人': 6,
+              '51-500人': 12,
+              '501-1000人': 4,
+              '1001-5000人': 2,
+              '>5000人': 17,
+              key: '不使用 RPC'
+            },
+            {
+              '1人': 4,
+              '2-10人': 3,
+              '11-50人': 10,
+              '51-500人': 7,
+              '501-1000人': 3,
+              '1001-5000人': 5,
+              '>5000人': 12,
+              key: '其他'
+            },
+            {
+              '1人': undefined,
+              '2-10人': undefined,
+              '11-50人': 3,
+              '51-500人': 7,
+              '501-1000人': 3,
+              '1001-5000人': 3,
+              '>5000人': 23,
+              key: 'Thrift'
+            },
+          ]
+        );
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="9fzCn" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">消息队列</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">常用的消息队列(多选) 仅 18% 的同学填写消息队列（问卷星渠道不包括）</p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-queue" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-queue', 2, {
+              text: '不同规模公司使用的消息队列',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [{
+                '1人': 1,
+                '2-10人': 5,
+                '11-50人': 21,
+                '51-500人': 38,
+                '501-1000人': 7,
+                '1001-5000人': 14,
+                '>5000人': 14,
+                key: 'RabbitMQ'
+              },
+              {
+                '1人': 2,
+                '2-10人': 2,
+                '11-50人': 15,
+                '51-500人': 34,
+                '501-1000人': 14,
+                '1001-5000人': 16,
+                '>5000人': 16,
+                key: 'Kafka'
+              },
+              {
+                '1人': 1,
+                '2-10人': 1,
+                '11-50人': 9,
+                '51-500人': 18,
+                '501-1000人': 1,
+                '1001-5000人': 6,
+                '>5000人': 9,
+                key: 'MQTT'
+              },
+              {
+                '1人': undefined,
+                '2-10人': 3,
+                '11-50人': 4,
+                '51-500人': 7,
+                '501-1000人': 3,
+                '1001-5000人': 7,
+                '>5000人': 11,
+                key: 'RocketMQ'
+              },
+              {
+                '1人': 2,
+                '2-10人': undefined,
+                '11-50人': 3,
+                '51-500人': 5,
+                '501-1000人': 1,
+                '1001-5000人': 2,
+                '>5000人': 4,
+                key: '其他'
+              },
+              {
+                '1人': undefined,
+                '2-10人': 1,
+                '11-50人': 4,
+                '51-500人': 4,
+                '501-1000人': 2,
+                '1001-5000人': undefined,
+                '>5000人': 1,
+                key: 'ActiveMQ'
+              },
+              {
+                '1人': undefined,
+                '2-10人': undefined,
+                '11-50人': undefined,
+                '51-500人': undefined,
+                '501-1000人': undefined,
+                '1001-5000人': undefined,
+                '>5000人': 1,
+                key: '自研'
+              }
+            ]
+        );
+      </script>
+      
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="cEspd" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">开发生态</h3>
+      <h4 id="99r5d" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">Node 版本</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>在 2020 年，开发者们普遍使用 12.x 或更高版本 13.x。</li>
+        <li>除了 NPM, 最流行的管理工具主要是 yarn 以及 cpm。</li>
+        <li>仅有不到 6% 的开发者在使用非 LTS 版本的 Node.js。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-version" style="width: 500px;height:350px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const verData = { '13.x': 284, '12.x': 477, '10.x': 284, '8.x': 61, '6.x': 3, '其他': 4 };
+        echarts.init(document.getElementById('canvas-version')).setOption({
+            title: {
+                text: 'Node.js 各版本使用情况',
+                subtext: '单数版本自动计入下一偶数版本',
+                bottom: 0,
+                left: '50%',
+                textAlign: 'center',
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: 'v{b} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: Object.keys(verData)
+            },
+            series: [
+                {
+                    name: '访问来源',
+                    type: 'pie',
+                    radius: '55%',
+                    center: ['50%', '40%'],
+                    data: Object.keys(verData).map((name) => ({ name, value: verData[name]}))
+                    ,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        });
+
+      </script>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="2NnwV" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">依赖管理</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>NPM 影响力巨大，仅有不到 6% 的同学可以摆脱 NPM 只使用其他的依赖管理工具。</li>
+        <li>除了 NPM, 最流行的管理工具主要是 yarn 以及 cpm。</li>
+        <li>随着开发经验的增加，开发者会更多的试图寻找 NPM 意外的依赖管理工具。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-npm" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-npm', 2, {
+              text: '不同 Node 开发经验使用的依赖管理工具',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [
+              { '0~1 年': 189, '1~3 年': 513, '3~5 年': 261, '5~10年': 91, key: 'npm' },
+              { '0~1 年': 91, '1~3 年': 309, '3~5 年': 142, '5~10年': 50, key: 'yarn' },
+              { '0~1 年': 70, '1~3 年': 186, '3~5 年': 96, '5~10年': 33, key: 'cnpm' },
+              { '0~1 年': 7, '1~3 年': 18, '3~5 年': 14, '5~10年': 5, key: 'bower' },
+              { '0~1 年': 6, '1~3 年': 14, '3~5 年': 7, '5~10年': 6, key: '其他' },
+            ]
+        );
+      </script>
+      
+    
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="3Rm2A" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">NPM 镜像</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>使用镜像加速的同学超过 57%，但是这对 NPM 的下载速度并没有起到决定性的影响。</li>
+        <li>通过比例分析可以发现，除了镜像加速，下载速度越快的同学中公司部署私有 NPM 镜像的比例越高。</li>
+      </ul>
+
+      <div id="canvas-image" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const iamgeChart = echarts.init(document.getElementById('canvas-image'));
+        const speedData = {
+          '非常快': {
+            '公司私有镜像': 30,
+            '有使用镜像加速': 35,
+            '不了解/没有使用': 17,
+            '其他': undefined
+          },
+          '比较快': {
+            '公司私有镜像': 82,
+            '有使用镜像加速': 130,
+            '其他': 6,
+            '不了解/没有使用': 31
+          },
+          '一般': {
+            '有使用镜像加速': 248,
+            '公司私有镜像': 153,
+            '不了解/没有使用': 42,
+            '其他': 2
+          },
+          '比较慢': {
+            '公司私有镜像': 53,
+            '有使用镜像加速': 133,
+            '不了解/没有使用': 20,
+            '其他': 1
+          },
+          '非常慢': {
+            '有使用镜像加速': 87,
+            '公司私有镜像': 29,
+            '不了解/没有使用': 13,
+            '其他': 1
+          },
+        };
+
+        const cols = [
+          '不了解/没有使用',
+          '有使用镜像加速',
+          '公司私有镜像',
+          '其他',
+        ]
+
+        option = {
+          legend: {
+            orient: 'vertical',
+            left: 50,
+            top: 50,
+          },
+
+          tooltip: {
+            trigger: 'axis',
+            showContent: true,
+            formatter: (list) => {
+              const [item] = list;
+              if (list.length === 1 && item && item.value) {
+                return (item.value / 1113 * 100).toFixed(2) + '%';
+              }
+              const sum = list[0].value.reduce((a, b) => a + (parseInt(b) || 0), 0);
+              return `${list[0]['name']} (${(sum/1113*100).toFixed(2)}%)`;
+            }
+          },
+          dataset: {
+            source: [
+              ['product', ...Object.keys(speedData)],
+              ...cols.map((key) => [key, ...Object.keys(speedData).map((speed) => speedData[speed][key])]),
+            ]
+          },
+          xAxis: {
+            type: 'category',
+            inverse: true
+          },
+          yAxis: {
+            gridIndex: 0
+          },
+          grid: {
+            top: '55%'
+          },
+          series: [
+            ...Array(cols.length).fill({
+              type: 'bar',
+              stack: '总量',
+              seriesLayoutBy: 'row'
+            }), {
+              type: 'pie',
+              id: 'pie',
+              radius: '30%',
+              center: ['50%', '25%'],
+              label: {
+                formatter: '{b}: {@2012} ({d}%)'
+              },
+              encode: {
+                itemName: 'product',
+                value: '2012',
+                tooltip: '2012'
+              }
+            }
+          ]
+        };
+
+        iamgeChart.on('updateAxisPointer', function(event) {
+          var xAxisInfo = event.axesInfo[0];
+          if (xAxisInfo) {
+            var dimension = xAxisInfo.value + 1;
+            iamgeChart.setOption({
+              series: {
+                id: 'pie',
+                label: {
+                  formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                },
+                encode: {
+                  value: dimension,
+                  tooltip: dimension
+                }
+              }
+            });
+          }
+        });
+
+        iamgeChart.setOption(option);
+
+        setTimeout(function() {
+          iamgeChart.setOption({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + 1 + ']} ({d}%)'
+              },
+              encode: {
+                value: 1,
+                tooltip: 1
+              }
+            }
+          });
+
+        });
+      </script>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h3 id="pT9ww" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">学习提升</h3>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="WiX8P" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">学习途径</h4>
+
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>老司机更多的从开源代码 (Github & NPM) 来学习 Node.js。</li>
+        <li>新同学相比之下会更多的通过学习视频以及博客 & 期刊等渠道学习。</li>
+
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+          
+      <div id="canvas-study" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        
+
+        setChart('canvas-study', 2, {
+              text: '不同从业经验的学习途径',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            },
+          [{
+            '不满 1 年': 89,
+            '1~3 年': 230,
+            '3~5 年': 260,
+            '5~10 年': 235,
+            '>10 年': 91,
+            key: '开源代码'
+          },
+          {
+            '不满 1 年': 81,
+            '1~3 年': 177,
+            '3~5 年': 204,
+            '5~10 年': 155,
+            '>10 年': 62,
+            key: '搜索引擎'
+          },
+          {
+            '不满 1 年': 72,
+            '1~3 年': 191,
+            '3~5 年': 203,
+            '5~10 年': 150,
+            '>10 年': 50,
+            key: '博客 & 期刊'
+          },
+          {
+            '不满 1 年': 68,
+            '1~3 年': 157,
+            '3~5 年': 177,
+            '5~10 年': 133,
+            '>10 年': 47,
+            key: '书籍'
+          },
+          {
+            '不满 1 年': 64,
+            '1~3 年': 127,
+            '3~5 年': 111,
+            '5~10 年': 80,
+            '>10 年': 22,
+            key: '学习视频'
+          },
+          {
+            '不满 1 年': 38,
+            '1~3 年': 67,
+            '3~5 年': 59,
+            '5~10 年': 35,
+            '>10 年': 25,
+            key: '在线课程'
+          },
+          {
+            '不满 1 年': 17,
+            '1~3 年': 43,
+            '3~5 年': 62,
+            '5~10 年': 56,
+            '>10 年': 13,
+            key: '公司'
+          },
+          {
+            '不满 1 年': 6,
+            '1~3 年': 26,
+            '3~5 年': 37,
+            '5~10 年': 23,
+            '>10 年': 11,
+            key: '线下活动'
+          },
+          {
+            '不满 1 年': 3,
+            '1~3 年': 4,
+            '3~5 年': 3,
+            '5~10 年': 4,
+            '>10 年': 5,
+            key: '其他'
+          },
+        ]);
+      </script>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="997614d8" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">使用困惑</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>Node 开发者使用困惑的前三分别是性能优化 (58%)、内存泄漏 (42.4%) 以及 Debug (24.89%)。</li>
+        <li>新人更容易面临的困惑前三分别是 异步编程、事件驱动以及 Debug。</li>
+        <li>随着开发经验的增加，内存泄漏的比例也逐步上升。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-confused" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-confused', 2, {
+              text: '不同从业经验的使用困惑',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [
+            { '0~1 年': 127, '1~3 年': 331, '3~5 年': 148, '5~10年': 43, key: '性能优化' }, 
+            { '0~1 年': 83, '1~3 年': 228, '3~5 年': 122, '5~10年': 41, key: '内存泄漏' }, 
+            { '0~1 年': 74, '1~3 年': 145, '3~5 年': 42, '5~10年': 16, key: 'Debug' }, 
+            { '0~1 年': 57, '1~3 年': 145, '3~5 年': 42, '5~10年': 11, key: '异常处理' }, 
+            { '0~1 年': 51, '1~3 年': 130, '3~5 年': 52, '5~10年': 15, key: 'node_modules 依赖' }, 
+            { '0~1 年': 70, '1~3 年': 94, '3~5 年': 19, '5~10年': 2, key: '异步编程' }, 
+            { '0~1 年': 53, '1~3 年': 98, '3~5 年': 25, '5~10年': 4, key: '事件驱动' }, 
+            { '0~1 年': 6, '1~3 年': 43, '3~5 年': 50, '5~10年': 21, key: '没有困惑' }, 
+            { '0~1 年': 4, '1~3 年': 16, '3~5 年': 11, '5~10年': 3, key: '其他' },
+          ]);
+      </script>
+      
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="e9ed9e0f" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">资源需求</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>文档是大家最期待的资源。</li>
+        <li>新同学对视频教程和免费在线课程的呼声最高。</li>
+        <li>随着开发经验的增加，开发更加关注文档、大会活动以及线下沙龙。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+
+      <div id="canvas-res" style="width: 900px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-res', 2, {
+              text: '不同 Node 开发经验的需求资源',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [
+          { '0~1 年': 144, '1~3 年': 409, '3~5 年': 179, '5~10年': 66, key: '文档' },
+          {
+            '0~1 年': 130,
+            '1~3 年': 344,
+            '3~5 年': 136,
+            '5~10年': 44,
+            key: '实战案例'
+          },
+          { '0~1 年': 85, '1~3 年': 216, '3~5 年': 107, '5~10年': 34, key: '技术博客' },
+          {
+            '0~1 年': 93,
+            '1~3 年': 164,
+            '3~5 年': 59,
+            '5~10年': 13,
+            key: '免费在线课程'
+          },
+          { '0~1 年': 90, '1~3 年': 152, '3~5 年': 54, '5~10年': 18, key: '教程视频' },
+          {
+            '0~1 年': 27,
+            '1~3 年': 115,
+            '3~5 年': 74,
+            '5~10年': 27,
+            key: '线下沙龙分享'
+          },
+          { '0~1 年': 23, '1~3 年': 76, '3~5 年': 51, '5~10年': 14, key: '大会活动' },
+          { '0~1 年': 30, '1~3 年': 82, '3~5 年': 33, '5~10年': 14, key: '大会演讲视频' },
+          { '0~1 年': 15, '1~3 年': 68, '3~5 年': 34, '5~10年': 12, key: '线下编码活动' },
+          { '0~1 年': 2, '1~3 年': 8, '3~5 年': 6, '5~10年': 2, key: '其他' },
+        ]);
+      </script>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="0bee622d" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">未来关键字</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>Serverless 和多线程是 2020 年的 Noder 们最关注的新关键字。</li>
+        <li>从业经验越高则越关注 WebAssembly (WASI) 和 N-API。</li>
+        <li>越年轻的同学越关注 Deno。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+        
+      <div id="canvas-key" style="width: 800px;height:650px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        setChart('canvas-key', 2, {
+              text: '不同从业经验的关注关键词',
+              bottom: 0,
+              left: '50%',
+              textAlign: 'center'
+            }, [ {
+          '不满 1 年': 68,
+          '1~3 年': 149,
+          '3~5 年': 181,
+          '5~10 年': 143,
+          '>10 年': 57,
+          key: 'Serverless'
+        }, {
+          '不满 1 年': 66,
+          '1~3 年': 154,
+          '3~5 年': 162,
+          '5~10 年': 144,
+          '>10 年': 54,
+          key: '多线程'
+        }, {
+          '不满 1 年': 52,
+          '1~3 年': 146,
+          '3~5 年': 142,
+          '5~10 年': 123,
+          '>10 年': 59,
+          key: 'WASI'
+        }, {
+          '不满 1 年': 41,
+          '1~3 年': 82,
+          '3~5 年': 96,
+          '5~10 年': 79,
+          '>10 年': 35,
+          key: 'Async Hooks'
+        }, {
+          '不满 1 年': 39,
+          '1~3 年': 81,
+          '3~5 年': 88,
+          '5~10 年': 74,
+          '>10 年': 22,
+          key: 'Deno'
+        }, {
+          '不满 1 年': 18,
+          '1~3 年': 43,
+          '3~5 年': 51,
+          '5~10 年': 49,
+          '>10 年': 18,
+          key: 'Code cache & AOT'
+        }, {
+          '不满 1 年': 12,
+          '1~3 年': 39,
+          '3~5 年': 42,
+          '5~10 年': 30,
+          '>10 年': 20,
+          key: 'N-API'
+        }, {
+          '不满 1 年': 3,
+          '1~3 年': 8,
+          '3~5 年': 5,
+          '5~10 年': 14,
+          '>10 年': 1,
+          key: '其他'
+        } ]
+        );
+      </script>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <h4 id="d569660d" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px;">生态期望</h4>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      <ul lake-indent="0" style="list-style-type: disc; margin: 0px; padding-left: 23px; font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word;">
+        <li>Node.js 开发者中呼声最高的需求是更好的性能以及开发效率。</li>
+        <li>此外不满 1 年的开发者更关心学习成本，年限越长越关心维护成本。</li>
+      </ul>
+      <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      
+      <div id="canvas-eco" style="width: 900px; height:600px; margin-top: 0px;"></div>
+      <script type="text/javascript">
+        const ecoChart = echarts.init(document.getElementById('canvas-eco'));
+        const data = {
+          '更好的性能': 707,
+          '更高的开发效率': 701,
+          '更容易维护': 605,
+          '更多的人参与': 375,
+          '更低的学习成本': 293,
+        };
+        option = {
+          legend: {},
+          tooltip: {
+            trigger: 'axis',
+            showContent: false
+          },
+          dataset: {
+            source: [
+              ['product', '不满 1 年', '1~3 年', '3~5 年', '5~10年', ],
+              ['更好的性能', 109, 372, 172, 54],
+              ['更多的人参与', 65, 172, 102, 36],
+              ['更高的开发效率', 130, 347, 171, 53],
+              ['更容易维护', 82, 292, 166, 65],
+              ['更低的学习成本', 101, 138, 45, 9]
+            ]
+          },
+          xAxis: [{
+            type: 'category'
+          }, {
+            gridIndex: 1,
+            type: 'value',
+          }],
+          yAxis: [{
+            gridIndex: 0
+          }, {
+            gridIndex: 1,
+            type: 'category',
+            data: Object.keys(data),
+            inverse: 1,
+          }],
+          grid: [{
+            top: '52%',
+            height: '250px',
+            width: '40%',
+          }, {
+            top: '6%',
+            height: '220px',
+          }],
+          series: [{
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            type: 'line',
+            xAxisIndex: 0,
+            yAxisIndex: 0,
+            smooth: true,
+            seriesLayoutBy: 'row'
+          }, {
+            stack: '全量',
+            xAxisIndex: 1,
+            yAxisIndex: 1,
+            name: '数据',
+            type: 'bar',
+            data: Object.keys(data).map((key) => data[key])
+          }, {
+            type: 'pie',
+            id: 'pie',
+            radius: '20%',
+            center: ['73%', '70%'],
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }]
+        };
+        const getEcoPie = (dimension) => ({
+          series: {
+            id: 'pie',
+            label: {
+              formatter: '{b} ({d}%)'
+            },
+            encode: {
+              value: dimension,
+              tooltip: dimension
+            }
+          }
+        });
+        ecoChart.on('updateAxisPointer', function(event) {
+          var xAxisInfo = event.axesInfo[0];
+          if (xAxisInfo && xAxisInfo.axisIndex === 0) {
+            var dimension = xAxisInfo.value + 1;
+            ecoChart.setOption(getEcoPie(dimension));
+          }
+        });
+        ecoChart.setOption(option);
+        setTimeout(function() {
+          ecoChart.setOption(getEcoPie(2));
+        });
+      </script>
+    </div>
+  </body>
+</html>
