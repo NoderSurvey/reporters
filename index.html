@@ -101,6 +101,11 @@
           });
           setTimeout(function() {
             chart.setOption(getPie(idx));
+            chart.dispatchAction({
+                type: 'showTip',
+                seriesIndex: 0,
+                dataIndex: 1
+            });
           });
         }
     </script>
@@ -354,7 +359,8 @@
           <li>典型的受访者来自两种公司，分别是是百人左右的小型公司，以及 5k 人以上的大公司。</li>
           <li>他们通常是 7 人左右的团队内的前端或者全栈工程师。</li>
         </ul>
-        <p class='line'><span data-card-type="inline" data-lake-card="image"><img data-role="image" src="https://img.alicdn.com/tfs/TB1SO6_B9f2gK0jSZFPXXXsopXa-742-419.png" data-raw-src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1585852963239-decb0550-c268-4f79-9e47-6e0b43cb5e36.png" class="image lake-drag-image" alt="image.png" title="image.png" style="visibility: visible; border: none; box-shadow: none; width: 746px; height: 411px;"></span></p>
+        <p class='line'><br></p>
+        <p class='line'><span data-card-type="inline" data-lake-card="image"><img data-role="image" src="https://img.alicdn.com/tfs/TB1SO6_B9f2gK0jSZFPXXXsopXa-742-419.png" class="image lake-drag-image" alt="image.png" title="image.png"></span></p>
         <p class='line'><br></p>
         <h3 id="工作内容"><a href="#工作内容"><svg viewBox="0 0 16 16" version="1.1" width="16" height="16" class="anchor-icon"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> 工作内容</h3>
         <h4 id="应用场景"><a href="#应用场景"><svg viewBox="0 0 16 16" version="1.1" width="16" height="16" class="anchor-icon"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> 应用场景</h4>
@@ -644,7 +650,6 @@
           <li>除了前端，整体上与 Node.js 最常见并存的语言分别是 Java(25.27%)、Python(22.24%) 和 Go(17.73%)。</li>
         </ul>
 
-
         <div id="canvas-lang" style="width: 800px;height:800px; margin-top: 0px;"></div>
         <script type="text/javascript">
           const langChart = echarts.init(document.getElementById('canvas-lang'));
@@ -709,7 +714,14 @@
               },
               data: [[4, 0, 3], [7, 0, 3], [8, 0, 7], [9, 0, 6], [10, 0, 13], [0, 1, 2], [1, 1, 1], [3, 1, 2], [4, 1, 3], [5, 1, 2], [7, 1, 6], [8, 1, 10], [9, 1, 1], [10, 1, 12], [1, 2, 1], [4, 2, 2], [5, 2, 2], [7, 2, 1], [8, 2, 1], [9, 2, 2], [10, 2, 1], [1, 3, 6], [3, 3, 4], [4, 3, 8], [5, 3, 4], [6, 3, 2], [7, 3, 4], [8, 3, 30], [9, 3, 15], [10, 3, 25], [1, 4, 2], [4, 4, 2], [5, 4, 1], [6, 4, 3], [7, 4, 6], [8, 4, 15], [9, 4, 4], [10, 4, 11], [0, 5, 5], [1, 5, 22], [2, 5, 4], [3, 5, 12], [4, 5, 23], [5, 5, 16], [6, 5, 11], [7, 5, 55], [8, 5, 95], [9, 5, 57], [10, 5, 133], [1, 6, 8], [3, 6, 3], [4, 6, 7], [5, 6, 9], [6, 6, 7], [7, 6, 36], [8, 6, 61], [9, 6, 44], [10, 6, 77], [1, 7, 6], [4, 7, 3], [5, 7, 3], [6, 7, 1], [7, 7, 4], [8, 7, 9], [9, 7, 6], [10, 7, 18], [0, 8, 11], [1, 8, 56], [2, 8, 5], [3, 8, 23], [4, 8, 58], [5, 8, 31], [6, 8, 24], [7, 8, 136], [8, 8, 325], [9, 8, 190], [10, 8, 674], [0, 9, 10], [1, 9, 21], [2, 9, 2], [3, 9, 3], [4, 9, 30], [5, 9, 17], [6, 9, 6], [7, 9, 47], [8, 9, 113], [9, 9, 87], [10, 9, 142], [0, 10, 4], [1, 10, 15], [3, 10, 9], [4, 10, 20], [5, 10, 15], [6, 10, 8], [7, 10, 32], [8, 10, 83], [9, 10, 76], [10, 10, 100], [0, 11, 2], [1, 11, 3], [3, 11, 4], [4, 11, 6], [5, 11, 4], [7, 11, 12], [8, 11, 29], [9, 11, 6], [10, 11, 31], [1, 12, 4], [3, 12, 4], [4, 12, 13], [5, 12, 7], [6, 12, 9], [7, 12, 21], [8, 12, 44], [9, 12, 25], [10, 12, 44], [0, 13, 4], [1, 13, 22], [2, 13, 1], [3, 13, 5], [4, 13, 17], [5, 13, 10], [6, 13, 5], [7, 13, 23], [8, 13, 55], [9, 13, 33], [10, 13, 51] ] .map(function(item) { return [item[1], item[0], item[2]]; })
             }]
-          })
+          });
+          setTimeout(function(){
+              langChart.dispatchAction({
+                  type: 'showTip',
+                  seriesIndex: 0,
+                  dataIndex: 46
+              });
+          }, 1000);
         </script>
 
 
@@ -1007,7 +1019,7 @@
             series: [{
               name: '数据',
               type: 'bar',
-              color: '#348335',
+              color: '#60a0a8',
               data: [876, 670, 288, 186]
             }]
           });
@@ -1035,7 +1047,8 @@
             '其他': 14,
             Emacs: 12,
           };
-          echarts.init(document.getElementById('canvas-ide')).setOption({
+          tool = echarts.init(document.getElementById('canvas-ide'));
+          tool.setOption({
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -1068,11 +1081,17 @@
             series: [{
               name: '数据',
               type: 'bar',
-              color: '#348335',
+              color: '#91c7ae',
               data: Object.keys(ideData).map((key) => ideData[key])
             }]
           });
-        
+          setTimeout(function(){
+              tool.dispatchAction({
+                  type: 'showTip',
+                  seriesIndex:0,  // 显示第几个series
+                  dataIndex: 0 // 显示第几个数据
+              });
+          });
         </script>
 
         <h4 id="进程管理"><a href="#进程管理"><svg viewBox="0 0 16 16" version="1.1" width="16" height="16" class="anchor-icon"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> 进程管理</h4>
@@ -2265,7 +2284,7 @@
                   <p data-lake-id="a98cd784fab4b0c38659e9b4d2067f32" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span>Node 地下铁 公众号&nbsp;</span></p>
                 </td>
                 <td style="min-width: 90px; font-size: 14px; white-space: normal; overflow-wrap: break-word; border: 1px solid rgb(217, 217, 217); padding: 4px 8px; cursor: default;">
-                  <p data-lake-id="1925a2a18e6baa644f6e5b7c11617652" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1yogtB4D1gK0jSZFyXXciOVXa-430-430.jpg" data-raw-src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1586854006653-18c618a1-b61c-4196-837d-e276414f424d.png" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
+                  <p data-lake-id="1925a2a18e6baa644f6e5b7c11617652" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1yogtB4D1gK0jSZFyXXciOVXa-430-430.jpg" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
                 </td>
               </tr>
               <tr style="height: 33px;">
@@ -2273,7 +2292,7 @@
                   <p data-lake-id="2d93c322a57ea774cd8d311b8d845128" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span>Node 全栈 公众号</span></p>
                 </td>
                 <td style="min-width: 90px; font-size: 14px; white-space: normal; overflow-wrap: break-word; border: 1px solid rgb(217, 217, 217); padding: 4px 8px; cursor: default;">
-                  <p data-lake-id="1a67ac552c71cb7ec651d76556dee4b4" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1hx7uBW61gK0jSZFlXXXDKFXa-430-430.jpg" data-raw-src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1586854141861-d95d6570-b17c-4ece-941b-778adc4955a8.png" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
+                  <p data-lake-id="1a67ac552c71cb7ec651d76556dee4b4" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1hx7uBW61gK0jSZFlXXXDKFXa-430-430.jpg" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
                 </td>
               </tr>
               <tr>
@@ -2281,7 +2300,7 @@
                   <p data-lake-id="a20d224c568e48b9d67847a2c66a8c01_p_0" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span>淘系前端团队 公众号</span></p>
                 </td>
                 <td colspan="1" style="text-align: start; vertical-align: top; background-color: rgb(255, 255, 255); color: rgb(38, 38, 38); font-weight: 400; min-width: 90px; font-size: 14px; white-space: normal; overflow-wrap: break-word; border: 1px solid rgb(217, 217, 217); padding: 4px 8px; cursor: default;">
-                  <p data-lake-id="a20d224c568e48b9d67847a2c66a8c01_p_0" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1QtgtB.Y1gK0jSZFCXXcwqXXa-430-430.jpg" data-raw-src="https://intranetproxy.alipay.com/skylark/lark/0/2020/png/146296/1586853997270-a9fc4d3a-92f4-4d15-9617-b56e011f0c9d.png" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
+                  <p data-lake-id="a20d224c568e48b9d67847a2c66a8c01_p_0" style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span data-card-type="inline" data-lake-card="image" contenteditable="false" class="lake-card-margin-top lake-card-margin-bottom"><img data-role="image" src="https://img.alicdn.com/tfs/TB1QtgtB.Y1gK0jSZFCXXcwqXXa-430-430.jpg" class="image lake-drag-image" alt="image.png" title="image.png" style="border: none; box-shadow: none; width: 148px; height: 148px; visibility: visible;"></span></p>
                 </td>
               </tr>
             </tbody>
