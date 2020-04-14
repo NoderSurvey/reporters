@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <title>Node.js 开发者报告</title>
+    <meta charset="utf-8">
+    <!-- 引入 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
+    <script src="https://gallerybox.echartsjs.com/dep/echarts/map/js/china.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+      function setChart(id, idx = 1, title, list) {
+          const chart = echarts.init(document.getElementById(id));
+          const cols = Object.keys(list[0]).length - 1;
+          const getPie = (dimension) => ({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+          chart.on('updateAxisPointer', function(event) {
+            var xAxisInfo = event.axesInfo[0];
+            if (xAxisInfo && xAxisInfo.axisIndex === 0) {
+              var dimension = xAxisInfo.value + 1;
+              chart.setOption(getPie(dimension));
+            }
+          });
+          chart.setOption({
+            legend: {},
+            tooltip: {
+              trigger: 'axis',
+              showContent: true,
+              formatter: (list) => {
+                  const [item] = list;
+                  if (list.length === 1 && item && item.value) {
+                    return (item.value / 1113 * 100).toFixed(2) + '%';
+                  }
+                  return list[0]['name'];
+              }
+            },
+            dataset: {
+              source: [
+                ['product', ...Object.keys(list[0]).slice(0, cols)], ...(list.map(({
+                  key
+                }) => key).map((key) => [key, ...((Object.entries(list.find((item) => item.key === key))).map(([_, n]) => n).slice(0, cols))]))
+              ]
+            },
+            xAxis: [{
+              type: 'category'
+            }, {
+              type: 'value',
+              gridIndex: 1
+            }],
+            yAxis: [{
+              gridIndex: 0
+            }, {
+              gridIndex: 1,
+              type: 'category',
+              data: list.map(({
+                key
+              }) => key),
+              inverse: 1,
+            }],
+            grid: [{
+              top: '320px',
+              height: '250px',
+              width: '40%',
+            }, {
+              top: '40px',
+              height: '220px',
+            }],
+            title: [title],
+            series: [...Array(list.length).fill({
+              type: 'line',
+              smooth: true,
+              seriesLayoutBy: 'row'
+            }), {
+              stack: '全量',
+              xAxisIndex: 1,
+              yAxisIndex: 1,
+              type: 'bar',
+              data: list.map((item) => Object.entries(item).reduce((sum, [_, n]) => sum + (Number(n) || 0), 0))
+            }, {
+              type: 'pie',
+              id: 'pie',
+              radius: '20%',
+              center: ['75%', '460px'],
+              label: {
+                formatter: '{b}: {@2012} ({d}%)'
+              },
+              encode: {
+                itemName: 'product',
+                value: '2012',
+                tooltip: '2012'
+              }
+            }]
+          });
+          setTimeout(function() {
+            chart.setOption(getPie(idx));
+          });
+        }
+    </script>
+    <style>
+      /* h1, h2, h3, h4, h5 {
+        border-bottom: 1px solid var(--border-color);
+      } */
+      #header {
+        height: 55px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 33;
+        border-bottom: 1px solid #eaeaea;
+        background: white;
+        color: var(--header-text-color);
+      }
+      #header-content {
+        width: 1000px;
+        margin: 15px auto 0;
+      }
+      #header-content a {
+        text-decoration: none;
+        color: black;
+      }
+      #header-content #logo {
+        font-weight: 400;
+        font-size: 1.2rem;
+        align-items: center;
+      }
+      #header-content span {
+        float: right;
+        padding-top: 5px;
+        margin-right: 20px;
+      }
+      #content {
+        padding-top: 55px;
+        width: 1000px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id='header'>
+      <div id='header-content'>
+        <a id='logo' href="https://github.com/NoderSurvey/">NoderSurvey</a>
+        <span><a href="/about.html">About us</a></span>
+        <span><a href="/index.html">Report</a></span>
+        <span><a href="https://github.com/NoderSurvey/reporters">Github</a></span>
+      </div>
+    </div>
+    <div id='content'>
+      <h1>关于我们</h1>
+      <div class="lake-content-editor-core lake-engine lake-typography-traditional" data-lake-element="root" data-selection-146296="%7B%22path%22%3A%5B%5B13%2C0%5D%2C%5B13%2C0%5D%5D%2C%22uuid%22%3A%22146296%22%2C%22active%22%3Atrue%7D">
+        <h3 id="1XvaU" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">简介</h3>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span><br></span></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span>我们是以 Ecma 成员的名义发起的一个 Node.js 开发者报告统计组织。我们的成员来自多个机构，包括 Ecma、TC39、Node.js 基金会等。同时也包含一系列来自阿里巴巴和腾讯的公司。</span></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span><br></span></p>
+        <h3 id="hkmUV" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">动机</h3>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">Node.js 开发者报告的诞生源自于改善国内 Node.js 开发者生态的现状。基于这一点，我们在 2020 年第一次发起了 Node.js 开发者报告调查。</p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">第一次调查的目的是为了系统的了解国内 Node.js 生态的现状，根据第一年的报告数据，后期组织会调整问卷内容以及统计方式。问卷内容后面会 host 在 Github 开源组织上由组织成员日常运营，欢迎社区同学来 PR。</p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><span><br></span></p>
+        <h3 id="eBDsK" style="padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px;">加入我们</h3>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;">本统计组织目前仅接受以公司的名义加入，如有意向请邮箱联系 lellansin@gmail.com。</p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+        <p style="font-size: 14px; color: rgb(38, 38, 38); line-height: 1.74; letter-spacing: 0.05em; outline-style: none; overflow-wrap: break-word; margin: 0px;"><br></p>
+      </div>
+    </div>
+  </body>
+</html>
