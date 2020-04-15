@@ -19,4 +19,5 @@ BFF、SSR、Serverless…… 随着技术的浪潮不断翻涌， Node.js 正在
 
 ## 关于我们
 
-本调查以 Ecma 成员名义发起，我们的组织成员来自多个机构，包括 Ecma、TC39、Node.js 基金会等，首次问卷调查以阿里巴巴、腾讯等公司领衔。更多详见[关于我们](https://nodersurvey.github.io/reporters/about.html)。
+本调查成员来自多个机构，包括 Ecma、TC39、Node.js 基金会等，首次问卷调查以阿里巴巴、腾讯等公司领衔。更多详见[关于我们](https://nodersurvey.github.io/reporters/about.html)。
+
