@@ -5,7 +5,6 @@
     <!-- 引入 ECharts 文件 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@4.7.0/dist/echarts.min.js"></script>
     <script src="https://gallerybox.echartsjs.com/dep/echarts/map/js/china.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script>
       function setChart(id, idx = 1, title, list) {
           const chart = echarts.init(document.getElementById(id));
@@ -103,16 +102,13 @@
             chart.setOption(getPie(idx));
             chart.dispatchAction({
                 type: 'showTip',
-                seriesIndex: 0,
-                dataIndex: 1
+                seriesIndex: list.length,
+                dataIndex: 0
             });
           });
         }
     </script>
     <style>
-      /* h1, h2, h3, h4, h5 {
-        border-bottom: 1px solid var(--border-color);
-      } */
       h3 { padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 20px; line-height: 28px; }
       h4 { padding: 7px 0px; margin: 0px; font-weight: 700; font-size: 16px; line-height: 24px; }
       h3 a, h4 a { text-decoration: none; color: black; }
@@ -193,11 +189,11 @@
                         radius: '55%',
                         center: ['40%', '50%'],
                         data: [
-                            {name: '<22 岁 (10.2%)', value: 111},
-                            {name: '22~24 岁 (26.1%)', value: 284},
-                            {name: '25~27 岁 (29.14%)', value: 317, selected: true},
-                            {name: '28~32 岁 (24.27%)', value: 269},
-                            {name: '>32 岁 (9.84%)', value: 107}
+                            {name: '<22 岁 (10.33%)', value: 115},
+                            {name: '22~24 岁 (26.24%)', value: 292},
+                            {name: '25~27 岁 (29.2%)', value: 325, selected: true},
+                            {name: '28~32 岁 (24.53%)', value: 273},
+                            {name: '>32 岁 (9.7%)', value: 108}
 
                         ],
                     }
@@ -287,12 +283,17 @@
 
         <div id="canvas-cities" style="width: 600px;height:400px; margin-top: 20px;"></div>
         <script type="text/javascript">
-            echarts.init(document.getElementById('canvas-cities')).setOption({
+            const citiesChart = echarts.init(document.getElementById('canvas-cities'))
+            citiesChart.setOption({
               tooltip: {
-                  trigger: 'axis',
-                  axisPointer: {
-                      type: 'shadow'
-                  }
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'shadow'
+                },
+                formatter: (params) => {
+                  const [item] = params.filter((item) => item.value);
+                  return (item.value / 1113 * 100).toFixed(2) + '%';
+                }
               },
               legend: {
                   data: ['城市', '其他城市', '移动办公', '海外']
@@ -350,13 +351,20 @@
                   data: [undefined, 10]
               }]
           });
+          setTimeout(function(){
+              citiesChart.dispatchAction({
+                  type: 'showTip',
+                  seriesIndex: 0,
+                  dataIndex: 10
+              });
+          }, 100);
         </script>
 
         <p class='line'><br></p>
         <h4 id="职业简历"><a href="#职业简历"><svg viewBox="0 0 16 16" version="1.1" width="16" height="16" class="anchor-icon"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a> 职业简历</h4>
         <p class='line'><br></p>
         <ul lake-indent="0" class="list">
-          <li>典型的受访者来自两种公司，分别是是百人左右的小型公司，以及 5k 人以上的大公司。</li>
+          <li>典型的受访者来自两种公司，分别是百人左右的小型公司，以及 5k 人以上的大公司。</li>
           <li>他们通常是 7 人左右的团队内的前端或者全栈工程师。</li>
         </ul>
         <p class='line'><br></p>
@@ -987,7 +995,8 @@
 
         <div id="canvas-cfg" style="width: 700px;height:300px; margin-top: 0px;"></div>
         <script type="text/javascript">
-          echarts.init(document.getElementById('canvas-cfg')).setOption({
+          const cfgChart = echarts.init(document.getElementById('canvas-cfg'));
+          cfgChart.setOption({
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -1023,6 +1032,13 @@
               data: [876, 670, 288, 186]
             }]
           });
+          setTimeout(function(){
+            cfgChart.dispatchAction({
+              type: 'showTip',
+              seriesIndex: 0,
+              dataIndex: 0
+            });
+          }, 1000);
         </script>
 
         
@@ -1184,7 +1200,8 @@
         <div id="canvas-os" style="width: 700px; height:150px; margin-top: 0px;"></div>
         <script type="text/javascript">
           const osData = { Linux: 958, MacOS: 236, Windows: 204 };
-          echarts.init(document.getElementById('canvas-os')).setOption({
+          const osChart = echarts.init(document.getElementById('canvas-os'));
+          osChart.setOption({
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -1221,6 +1238,13 @@
               data: Object.keys(osData).map((key) => osData[key])
             }]
           });
+          setTimeout(function(){
+            osChart.dispatchAction({
+              type: 'showTip',
+              seriesIndex: 0,
+              dataIndex: 0
+            });
+          }, 1000);
         
         </script>
 
@@ -1395,7 +1419,7 @@
         <p class='line'><br></p>
         <ul lake-indent="0" class="list">
           <li>Noder 们对于反向代理的概念是约等于 Nginx 的。</li>
-          <li>使用反向代理的基本都会使用 Nginx。</li>
+          <li>使用反向代理的基本都会使用 Nginx （由于多选的原因百分比会超过 100%）。</li>
           <li>越大的公司越倾向于使用反向代理。</li>
         </ul>
         <p class='line'><br></p>
@@ -1689,8 +1713,7 @@
                       type: 'pie',
                       radius: '55%',
                       center: ['50%', '40%'],
-                      data: Object.keys(verData).map((name) => ({ name, value: verData[name]}))
-                      ,
+                      data: Object.keys(verData).map((name) => ({ name, value: verData[name]})),
                       emphasis: {
                           itemStyle: {
                               shadowBlur: 10,
@@ -2153,7 +2176,13 @@
             legend: {},
             tooltip: {
               trigger: 'axis',
-              showContent: false
+              axisPointer: {
+                type: 'shadow'
+              },
+              formatter: (params) => {
+                const [item] = params.filter((item) => item.value);
+                return (item.value / 1113 * 100).toFixed(2) + '%';
+              }
             },
             dataset: {
               source: [
@@ -2253,6 +2282,11 @@
           ecoChart.setOption(option);
           setTimeout(function() {
             ecoChart.setOption(getEcoPie(2));
+            ecoChart.dispatchAction({
+              type: 'showTip',
+              seriesIndex: 5,
+              dataIndex: 0
+            });
           });
         </script>
         <p class='line'><br></p>
