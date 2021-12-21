@@ -2,7 +2,8 @@
 
 ## 报告
 
-- [2020 年度报告](https://nodersurvey.github.io/reporters)
+- [2021 年度报告](https://nodersurvey.github.io/reporters/index.html)
+- [2020 年度报告](https://nodersurvey.github.io/reporters/2020.html)
 
 ## 动机
 

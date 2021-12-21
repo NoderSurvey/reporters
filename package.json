@@ -1,0 +1,24 @@
+{
+  "name": "reporters",
+  "version": "1.0.0",
+  "description": "## 报告",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint --fix --ext .js ./scripts/generate.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoderSurvey/reporters.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NoderSurvey/reporters/issues"
+  },
+  "homepage": "https://github.com/NoderSurvey/reporters#readme",
+  "devDependencies": {
+    "eslint": "^8.5.0"
+  }
+}
